@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mean, Variance & Std Dev Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      max-width: 600px;
+      margin: auto;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      color: #333;
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #007acc;
+      text-align: center;
+    }
+    canvas {
+      margin-top: 30px;
+      width: 100% !important;
+      height: auto !important;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>✪ Mean, Variance & Std Dev Calculator ✪</h2>
+
+  <label for="numbers">Enter numbers (separated by commas):</label>
+  <input type="text" id="numbers" placeholder="e.g. 10, 20, 30">
+  <button onclick="calculate()">Calculate</button>
+
+  <div id="result"></div>
+  <canvas id="chart"></canvas>
+
+  <script>
+    let chart;
+
+    function calculate() {
+      const input = document.getElementById("numbers").value;
+      const nums = input.split(",").map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+
+      if (nums.length === 0) {
+        document.getElementById("result").innerHTML = "⚠️ Please enter valid numbers.";
+        return;
+      }
+
+      const mean = nums.reduce((a, b) => a + b, 0) / nums.length;
+      const variance = nums.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / nums.length;
+      const stdDev = Math.sqrt(variance);
+
+      document.getElementById("result").innerHTML =
+        `Mean: ${mean.toFixed(2)}<br>` +
+        `Variance: ${variance.toFixed(2)}<br>` +
+        `Standard Deviation: ${stdDev.toFixed(2)}`;
+
+      drawChart(nums);
+    }
+
+    function drawChart(data) {
+      const ctx = document.getElementById('chart').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.map((_, i) => `#${i + 1}`),
+          datasets: [{
+            label: 'Values',
+            data: data,
+            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+            borderColor: 'rgba(0, 123, 255, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
